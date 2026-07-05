@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>haAplo — Does ChatGPT say your name?</title>
+<meta name="description" content="haAplo tests how ChatGPT, Claude, Gemini and Perplexity find, read and cite your website — then generates every fix. Join the waitlist.">
+<style>
+  :root{
+    --bg:#1f1f1e;
+    --surface:#262626;
+    --text:#ffffff;
+    --muted:rgba(255,255,255,.58);
+    --faint:rgba(255,255,255,.35);
+    --line:rgba(255,255,255,.08);
+    --green:#54d38a;
+    --red:#ef6a5a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  .topbar{display:flex;align-items:center;padding:22px 0}
+  .logo{font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .soon-tag{
+    margin-left:auto;font-size:11px;font-weight:750;letter-spacing:.1em;color:var(--green);
+    border:1px solid rgba(84,211,138,.4);border-radius:99px;padding:6px 14px;
+  }
+
+  .hero{padding:72px 0 20px;text-align:center}
+  h1{font-size:46px;font-weight:750;letter-spacing:-.03em;line-height:1.12;max-width:780px;margin:0 auto}
+  @media(max-width:640px){h1{font-size:32px}}
+  .hero p.sub{color:var(--muted);font-size:17px;margin:20px auto 0;max-width:640px}
+
+  .wl{
+    margin:44px auto 0;max-width:620px;background:var(--surface);
+    border:1px solid rgba(84,211,138,.35);border-radius:18px;padding:36px 34px;
+    box-shadow:0 0 60px rgba(84,211,138,.08);text-align:center;
+  }
+  .wl .soon{
+    display:inline-block;font-size:11px;font-weight:750;letter-spacing:.1em;color:var(--green);
+    border:1px solid rgba(84,211,138,.4);border-radius:99px;padding:5px 14px;margin-bottom:16px;
+  }
+  .wl h2{font-size:26px;font-weight:750;letter-spacing:-.02em}
+  .wl .wsub{color:var(--muted);font-size:14.5px;margin-top:8px}
+
+  .segs{display:flex;gap:8px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+  .seg{
+    border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:13px;
+    color:var(--muted);cursor:pointer;user-select:none;
+  }
+  .seg.on{background:var(--text);color:#171716;border-color:var(--text);font-weight:600}
+
+  .wlrow{display:flex;gap:10px;margin-top:16px}
+  @media(max-width:520px){.wlrow{flex-direction:column}}
+  .wlrow input[type=email]{
+    flex:1;background:var(--bg);border:1px solid rgba(255,255,255,.16);border-radius:12px;
+    padding:15px 18px;color:var(--text);font-size:15px;outline:none;
+  }
+  .wlrow input::placeholder{color:var(--faint)}
+  .wlrow button{
+    background:var(--green);color:#171716;border:none;border-radius:12px;
+    padding:15px 24px;font-size:14.5px;font-weight:750;cursor:pointer;white-space:nowrap;
+  }
+  .wlrow button:disabled{opacity:.55;cursor:default}
+
+  .consent{
+    display:flex;gap:9px;align-items:flex-start;text-align:left;
+    margin-top:14px;font-size:12px;color:var(--faint);
+  }
+  .consent input{margin-top:3px;accent-color:#54d38a}
+  .consent a{color:var(--muted)}
+
+  .msg{margin-top:18px;font-size:15px;font-weight:600;display:none}
+  .msg.ok{color:var(--green)}
+  .msg.err{color:var(--red)}
+
+  .hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:70px 0 8px}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .step .n{
+    width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.08);
+    display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-bottom:14px;
+  }
+  .step b{display:block;font-size:16px;margin-bottom:6px}
+  .step span{color:var(--muted);font-size:13.5px}
+
+  .pricetease{text-align:center;color:var(--faint);font-size:13px;padding:26px 0 0}
+  .pricetease b{color:var(--muted);font-weight:600}
+
+  footer{border-top:1px solid var(--line);margin-top:70px;padding:26px 0 50px;color:var(--faint);font-size:12px}
+  footer .cols{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+  details{margin-top:16px;max-width:720px}
+  summary{cursor:pointer;color:var(--muted)}
+  details p{margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="logo">haAplo</span>
+    <span class="soon-tag">LAUNCHING SOON</span>
+  </div>
+
+  <div class="hero">
+    <h1>When customers ask ChatGPT,<br>does it say your name?</h1>
+    <p class="sub">haAplo tests how ChatGPT, Claude, Gemini and Perplexity find, read and cite your website — then generates every fix. Your score in 60 seconds.</p>
+  </div>
+
+  <div class="wl">
+    <span class="soon">LIMITED SEATS</span>
+    <h2>Be first in line</h2>
+    <p class="wsub">Reserve your seat now. When we launch, your access is ready on day one.</p>
+
+    <div class="segs" id="segs">
+      <span class="seg" data-v="agency">I run a web agency</span>
+      <span class="seg" data-v="business">I own a business</span>
+      <span class="seg" data-v="curious">Just curious</span>
+    </div>
+
+    <form id="wlform" onsubmit="return joinWl(event)">
+      <div class="wlrow">
+        <input type="email" id="email" placeholder="you@company.com" required autocomplete="email">
+        <button type="submit" id="btn">Reserve my seat</button>
+      </div>
+      <!-- honeypot: humans never see it, bots fill it -->
+      <div class="hp"><label>Website<input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="consent">
+        <input type="checkbox" id="consent" required>
+        <span>I agree to be contacted about haAplo's launch and my early access. No spam, no third parties. See <a href="#privacy">privacy</a>.</span>
+      </label>
+    </form>
+
+    <div class="msg ok" id="msgOk">✓&nbsp; You're in. Watch your inbox — launch news comes to you first.</div>
+    <div class="msg err" id="msgErr"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><b>Scan</b><span>We crawl your pages exactly like the AI engines do.</span></div>
+    <div class="step"><div class="n">2</div><b>Score</b><span>You get a 0-100 score and see exactly where you lose points.</span></div>
+    <div class="step"><div class="n">3</div><b>Fix</b><span>We generate the code that makes AI engines read and cite you.</span></div>
+  </div>
+
+  <div class="pricetease">At launch: <b>free audit for everyone</b></div>
+
+  <footer>
+    <div class="cols">
+      <span>haAplo — AI visibility for your site.</span>
+      <span>© 2026 haAplo</span>
+    </div>
+    <details id="privacy">
+      <summary>Privacy</summary>
+      <p>We store the email you give us for one purpose: telling you about haAplo's launch and setting up your early access. We don't sell it, share it, or spam it. Data is stored in the EU. Want out? Reply to any of our emails and we delete you the same day.</p>
+    </details>
+  </footer>
+
+</div>
+
+<script>
+  /* ========== CONFIG — incolla qui i tuoi valori Supabase (vedi SETUP.md) ========== */
+  var SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+  var SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+  /* =============================================================================== */
+
+  // segment chips (optional)
+  var segment = null;
+  document.querySelectorAll('.seg').forEach(function(el){
+    el.addEventListener('click', function(){
+      var was = el.classList.contains('on');
+      document.querySelectorAll('.seg').forEach(function(e){e.classList.remove('on')});
+      if(!was){ el.classList.add('on'); segment = el.dataset.v; } else { segment = null; }
+    });
+  });
+
+  function showErr(t){
+    var e = document.getElementById('msgErr');
+    e.textContent = t; e.style.display = 'block';
+  }
+
+  function joinWl(ev){
+    ev.preventDefault();
+    document.getElementById('msgErr').style.display = 'none';
+
+    // honeypot: pretend success, store nothing
+    if(document.getElementById('website').value){
+      document.getElementById('wlform').style.display = 'none';
+      document.getElementById('segs').style.display = 'none';
+      document.getElementById('msgOk').style.display = 'block';
+      return false;
+    }
+
+    var email = document.getElementById('email').value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ showErr('That email doesn\'t look right — check it and try again.'); return false; }
+    if(!document.getElementById('consent').checked){ showErr('Please tick the consent box.'); return false; }
+
+    var src = new URLSearchParams(location.search).get('utm_source') || 'direct';
+    var btn = document.getElementById('btn');
+    btn.disabled = true; btn.textContent = 'One second…';
+
+    fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+      method:'POST',
+      headers:{
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email: email, segment: segment, source: src, consent: true })
+    }).then(function(r){
+      if(r.status === 201){
+        document.getElementById('wlform').style.display = 'none';
+        document.getElementById('segs').style.display = 'none';
+        document.getElementById('msgOk').style.display = 'block';
+      } else if(r.status === 409){
+        showErr('You\'re already on the list — we\'ve got you.');
+        btn.disabled = false; btn.textContent = 'Reserve my seat';
+      } else {
+        return r.text().then(function(t){
+          if(t.indexOf('waitlist_full') !== -1){
+            showErr('The list is full. Follow us on social — more seats may open.');
+            btn.disabled = true; btn.textContent = 'List full';
+          } else {
+            showErr('Something went wrong. Try again in a minute.');
+            btn.disabled = false; btn.textContent = 'Reserve my seat';
+          }
+        });
+      }
+    }).catch(function(){
+      showErr('Connection problem. Try again in a minute.');
+      btn.disabled = false; btn.textContent = 'Reserve my seat';
+    });
+    return false;
+  }
+</script>
+</body>
+</html>
