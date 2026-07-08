@@ -55,7 +55,8 @@
   .wl h2{font-size:26px;font-weight:750;letter-spacing:-.02em}
   .wl .wsub{color:var(--muted);font-size:14.5px;margin-top:8px}
 
-  .segs{display:flex;gap:8px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+  .grouplabel{font-size:11px;letter-spacing:.08em;color:var(--faint);margin-top:22px;text-transform:uppercase}
+  .segs{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
   .seg{
     border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:13px;
     color:var(--muted);cursor:pointer;user-select:none;
@@ -130,10 +131,24 @@
     <h2>Be first in line</h2>
     <p class="wsub">Reserve your seat now. When we launch, your access is ready on day one.</p>
 
-    <div class="segs" id="segs">
-      <span class="seg" data-v="agency">I run a web agency</span>
-      <span class="seg" data-v="business">I own a business</span>
-      <span class="seg" data-v="curious">Just curious</span>
+    <div id="chipsArea">
+      <div class="grouplabel">Who are you?</div>
+      <div class="segs" id="segs">
+        <span class="seg" data-v="agency">I run a web agency</span>
+        <span class="seg" data-v="business">I own a business</span>
+        <span class="seg" data-v="curious">Just curious</span>
+      </div>
+      <div class="grouplabel">Where did you find us?</div>
+      <div class="segs" id="srcs">
+        <span class="seg" data-v="tiktok">TikTok</span>
+        <span class="seg" data-v="instagram">Instagram</span>
+        <span class="seg" data-v="youtube">YouTube</span>
+        <span class="seg" data-v="x">X</span>
+        <span class="seg" data-v="linkedin">LinkedIn</span>
+        <span class="seg" data-v="facebook">Facebook</span>
+        <span class="seg" data-v="friend">A friend</span>
+        <span class="seg" data-v="other">Other</span>
+      </div>
     </div>
 
     <form id="wlform" onsubmit="return joinWl(event)">
@@ -159,7 +174,7 @@
     <div class="step"><div class="n">3</div><b>Fix</b><span>We generate the code that makes AI engines read and cite you.</span></div>
   </div>
 
-  <div class="mission">haAplo exists for one reason: when customers ask AI, your name has to COME  and STAY up . And NEEDS to stay up.</div>
+  <div class="mission">haAplo exists for one reason: when customers ask AI, your name has to be MENTIONED and STAY up there!</div>
 
   <div class="pricetease">At launch: <b>free audit for everyone</b></div>
 
@@ -178,19 +193,24 @@
 
 <script>
   /* ========== CONFIG — incolla qui i tuoi valori Supabase (vedi SETUP.md) ========== */
-  var SUPABASE_URL = 'https://fumfwydrejreqwlpyxra.supabase.co';
-  var SUPABASE_ANON_KEY = 'sb_publishable_JwDOzO8Kqb1EFSyEZeBCqg_ok2emjaD';
+  var SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';
+  var SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
   /* =============================================================================== */
 
-  // segment chips (optional)
-  var segment = null;
-  document.querySelectorAll('.seg').forEach(function(el){
-    el.addEventListener('click', function(){
-      var was = el.classList.contains('on');
-      document.querySelectorAll('.seg').forEach(function(e){e.classList.remove('on')});
-      if(!was){ el.classList.add('on'); segment = el.dataset.v; } else { segment = null; }
+  // chip groups: persona (optional) + source (required)
+  function chipGroup(sel, cb){
+    var chips = document.querySelectorAll(sel);
+    chips.forEach(function(el){
+      el.addEventListener('click', function(){
+        var was = el.classList.contains('on');
+        chips.forEach(function(e){e.classList.remove('on')});
+        if(!was){ el.classList.add('on'); cb(el.dataset.v); } else { cb(null); }
+      });
     });
-  });
+  }
+  var segment = null, srcChoice = null;
+  chipGroup('#segs .seg', function(v){ segment = v; });
+  chipGroup('#srcs .seg', function(v){ srcChoice = v; });
 
   function showErr(t){
     var e = document.getElementById('msgErr');
@@ -204,16 +224,17 @@
     // honeypot: pretend success, store nothing
     if(document.getElementById('website').value){
       document.getElementById('wlform').style.display = 'none';
-      document.getElementById('segs').style.display = 'none';
+      document.getElementById('chipsArea').style.display = 'none';
       document.getElementById('msgOk').style.display = 'block';
       return false;
     }
 
     var email = document.getElementById('email').value.trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ showErr('That email doesn\'t look right — check it and try again.'); return false; }
+    if(!srcChoice){ showErr('One tap missing: where did you find us?'); return false; }
     if(!document.getElementById('consent').checked){ showErr('Please tick the consent box.'); return false; }
 
-    var src = new URLSearchParams(location.search).get('utm_source') || 'direct';
+    var src = srcChoice;
     var btn = document.getElementById('btn');
     btn.disabled = true; btn.textContent = 'One second…';
 
@@ -229,7 +250,7 @@
     }).then(function(r){
       if(r.status === 201){
         document.getElementById('wlform').style.display = 'none';
-        document.getElementById('segs').style.display = 'none';
+        document.getElementById('chipsArea').style.display = 'none';
         document.getElementById('msgOk').style.display = 'block';
       } else if(r.status === 409){
         showErr('You\'re already on the list — we\'ve got you.');
