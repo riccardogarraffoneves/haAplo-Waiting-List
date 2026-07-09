@@ -231,6 +231,7 @@
 
     var email = document.getElementById('email').value.trim().toLowerCase();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ showErr('That email doesn\'t look right — check it and try again.'); return false; }
+    if(!segment){ showErr('One tap missing: tell us who you are.'); return false; }
     if(!srcChoice){ showErr('One tap missing: where did you find us?'); return false; }
     if(!document.getElementById('consent').checked){ showErr('Please tick the consent box.'); return false; }
 
